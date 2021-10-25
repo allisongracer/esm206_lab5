@@ -65,10 +65,49 @@ Mean otter length is `r otter_ci$estimate`
 
 you can apply things to this in-line code chunk (ex. lets round to 1 decimal place and add units)
 
-Mean otter length is `r round(otter_ci$estimate, 1)` inches.
+Mean otter length is `r round(otter_ci$estimate, 1)` inches. With a 95% confidence interval of [`r otter_ci$conf.int[1]`], [`r round(otter_ci$conf.int[2], 1)`]
+
+this [r otter_ci$conf.int[1]] is saying pull from 
 
 hover over this mini in-line code chunk ans hit command + return to see the value
 
-This process of writing things with in-line code feels tedious at first, but is a huge step to producing reproducable writing in your scientific reports. 
+This process of writing things with in-line code feels tedious at first, but is a huge step to producing reproducible writing in your scientific reports. 
 
+## Part 2: Two-sample t-tests
+
+If we have 2 independent sample, they do not influence each other, do we have evidence to make us think they are from populatons with different means. 
+
+### Example 1
+
+Make two mock samples, and ask the question: do we have sufficient evidence to make us reject the null hypothesis that these samples were drawn from populations with the same mean?
+
+```{r}
+# Make my mock samples
+
+oak_trees <- c(20, 19, 24, 28, 34, 12, 15, 25)
+
+
+pine_trees <- c(39, 26, 20, 30, 37, 22, 19, 18)
+
+# Run a two-sample t-test (2-sided, 2 sample - are they different enough in either direction to reject null hyp.)
+trees_t <- t.test(oak_trees, pine_trees)
+
+# Null hypothesis: mean heights are the same
+# another way to say that: Trees are drawn from populations with the same mean height
+# p-value = 0.2871... what is this p-value telling us? 
+# p-value is telling us: if these samples are drawn from populations with the same mean height (if these samples were drawn from tree populations that have the same mean height), there is a 28.7% chance of taking random samples from those populations and finding that the sample means are at least as different by the ones that we found by random chance. 
+
+# we would not say this is rigorous or compelling evidence to reject the null hypothesis, we are usually using a significance level of 5%, I want less than a 5% chance before I reject the null hypothesis. 
+
+# this p: almost 30/100 times I would get this difference, meaning I do not have enough evidence to reject the null hypothesis that these are drawn from populations with the same mean. 
+
+# the way to report this, report mean values
+
+```
+
+The mean heights of oak and pine trees were (x +- Y) and (X +- Y), respectively, and the difference was not significant (t(`r trees_t$parameter`) =  `r round(trees_t$statistic, 1)`, p = `r trees_t$p.value`). 
+
+"t(df) = t-statistic, which gets me a p value of = p-value" 
+
+(df) = degree of freedom, tells something about sample size, a measure of sample size. the larger you df the larger your sample size. 
 
