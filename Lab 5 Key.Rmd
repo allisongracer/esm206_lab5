@@ -2,29 +2,73 @@
 title: "Lab 5 (Gracer)"
 author: "Allison Gracer"
 date: "10/25/2021"
-output: html_document
+output: 
+  html_document: 
+    theme: journal
+    toc: yes
+    code_folding: hide
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(tidyverse)
+library(effsize)
 ```
 
-## R Markdown
+## Part 1: Confidence Intervals
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+In this section, we'll use the `t.test()` function to calculate confidence intervals. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+### Example 1
 
-```{r cars}
-summary(cars)
+Create a single mock sample containing a number of alues, then learn to use `t.test()` to return confidence intervals, and learn about in-line code referencing so our text becomes more reproducible, too. 
+
+```{r}
+# Create a mock sample (create 1 vector of values) `c()` is how we create a vector
+
+otter_lengths <- c(30, 45, 28, 31, 34, 46, 52, 29)
+
+# Find the confidence interval:
+otter_ci <- t.test(otter_lengths)
+
+# find the standard deviation
+otter_sd <- sd(otter_lengths)
 ```
+what does this 95% confidence interval actually mean? 
 
-## Including Plots
+Answer: the confidence interval means that we would expect if we took multiple samples from this population and calculated a CI for each these, we expect 95% of those CI to contain the true population mean. 
 
-You can also embed plots, for example:
+mean otter length is 36.9 inches with a 95% confidence interval of [29.1, 44.7] inches. (original)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+What are some really important pieces of information missing if my audience is only going to read the above statement?
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Updated: 
+Mean otter length is 36.9 inches $\pm$ 9.3 mean($\pm$ sd, n = 8) with a 95% confidence interval of [29.1, 44.7] inches.
+
+  - sample size (n = 8)
+  - $\pm$ 9.3 mean($\pm$ sd)
+  
+We do not want a human gap, we want to use in-line referencing. We need to store the outputs as something
+
+
+##### How to call elements of a list
+
+objectname$valuename
+
+i.e. otter_ci$p.value
+
+*** type t.test into help for list of operations ***
+
+#### Now, using in-line referencing
+
+Mean otter length is `r otter_ci$estimate`
+
+you can apply things to this in-line code chunk (ex. lets round to 1 decimal place and add units)
+
+Mean otter length is `r round(otter_ci$estimate, 1)` inches.
+
+hover over this mini in-line code chunk ans hit command + return to see the value
+
+This process of writing things with in-line code feels tedious at first, but is a huge step to producing reproducable writing in your scientific reports. 
+
+
