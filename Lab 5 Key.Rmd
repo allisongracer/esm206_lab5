@@ -111,3 +111,73 @@ The mean heights of oak and pine trees were (x +- Y) and (X +- Y), respectively,
 
 (df) = degree of freedom, tells something about sample size, a measure of sample size. the larger you df the larger your sample size. 
 
+*AVOID*: p = 0
+
+when things get really small (usually p< 0.001)
+
+*not great:* p = 0.0000000013
+*Better*: p <0.001
+
+
+## Part 3: Another t-test with cars data
+
+Using the `mpg` data set, built in. 
+
+### Take a look at the data
+
+```{r}
+compact_suv <- mpg %>% 
+  filter(class %in% c("compact", "suv")) #contains either value compact OR value SUV, keep that row
+
+# check for remaining levels (check to see if my filter worked)
+unique(compact_suv$class)
+
+```
+Create a histogram of city gas mileage (cty) faceted by class starting from compact_suv.
+
+```{r}
+ggplot(data = compact_suv, aes(x = cty)) +
+  geom_histogram(bins = 12) +
+  facet_wrap(~ class)
+
+ggplot(data = compact_suv, aes(sample = cty)) +
+  geom_qq() +
+  facet_wrap(~ class)
+```
+Find some summary statistics for each group. 
+
+```{r}
+car_stats <- compact_suv %>% 
+  group_by(class) %>% 
+  summarize(
+    mean_city = round(mean(cty),2),
+    sd_city = sd(cty),
+    sample_size = n()
+  )
+
+car_stats
+```
+The t.test() function REALLY wants vectors of things. 
+So let's take information from data frame to pull out vector that we can plug into the t.test().
+Use the `pull()` function to pull out a vector from a data frame. 
+
+```{r}
+compact_sample <- compact_suv %>% 
+filter(class == "compact") %>% 
+  pull(cty)
+
+# Your turn: do the ssame thing to get a vector of city gas mileage for SUV
+suv_sample <- compact_suv %>% 
+  filter(class == "suv") %>% 
+  pull(cty)
+
+```
+
+null hypothesis: Mean city gas mileages for SUV's and compact cars are the same
+use a t.test to see if I have enough evidence to reject this null hypothesis
+
+```{r}
+t.test(compact_sample, suv_sample)
+```
+
+What can we conclude based on this? the p-value is so very very small, we would conclude we have enough evidence to reject this null hypothesis. 
